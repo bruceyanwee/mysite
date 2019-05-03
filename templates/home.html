@@ -1,0 +1,78 @@
+{% extends 'base.html'%}
+{% load staticfiles %}
+{% block title%}
+    网站首页
+{% endblock %}
+{%block header_extends %}
+    <link rel="stylesheet" href="{% static 'home.css'%}">
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+{%endblock%}
+{% block nav_home_active %}active{% endblock %}
+{% block context %}
+    <h3 class="home-content">欢迎来到Bruce的小站</h3>
+    <div id="container"></div>
+    <!-- 今天24小时的热门博客 -->
+    <div class="hot_data" >
+        <h3 >今天热门点击</h3>
+        <ul>
+            {% for hot_data in today_hot_data %}
+            <a href="{%url 'blog_detail' hot_data.content_object.pk%}">{{ hot_data.content_object.title }}({{hot_data.read_num}})</a>
+            {% empty %}
+            <li>今天暂时没有博客</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="hot_data">
+        <h3>昨天热门点击</h3>
+        <ul>
+            {% for hot_data in yes_hot_data %}
+            <a href="{%url 'blog_detail' hot_data.content_object.pk%}">{{ hot_data.content_object.title }}({{hot_data.read_num}})</a>
+            {% empty %}
+            <li>昨天暂时没有博客</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="hot_data">
+        <h3>一周热门点击</h3>
+        <ul>
+            {% for hot_blog in week_hot_data %}
+            <a href="{%url 'blog_detail' hot_blog.id%}">{{ hot_blog.title }}({{hot_blog.read_num_sum}})</a>
+            {% empty %}
+            <li>本周暂时没有博客</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        var myChart = Highcharts.chart('container', {
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: '访问详情'
+        },
+        xAxis: {
+            title :{text:'前七日阅读数据'},
+            categories: {{ dates|safe }},
+        },
+        yAxis: {
+            title: { text: '阅读量'},
+            gridLineDashStyle:'Dash'
+        },
+        plotOption:{
+            line:{
+                dataLabels:{
+                    enabled:true
+                }
+            }
+        },
+        series: [{
+            name: '阅读量',
+            data: {{ read_nums }},
+        }],
+        legend: {enabled:false },
+        credits: {enabled:false},
+        });
+    });
+    </script>
+{% endblock %}
