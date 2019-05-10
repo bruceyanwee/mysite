@@ -1,2 +1,5 @@
 Django==2.0
 pytz==2018.9
+django-ckeditor
+Pillow
+django-js-asset
